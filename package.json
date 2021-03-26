@@ -1,8 +1,8 @@
 {
-  "name": "levered",
+  "name": "flashloans",
   "version": "1.0.0",
   "main": "hardhat.config.ts",
-  "repository": "https://github.com/gg2001/levered.git",
+  "repository": "https://github.com/gg2001/flashloans.git",
   "author": "Ganesh Gautham Elango <gautham.gg@gmail.com> (https://gcubed.io/)",
   "license": "GPL-3.0",
   "devDependencies": {
