@@ -40,6 +40,7 @@ contract DYDX is ICallee {
     /// @param token The loan currency
     /// @param amount The amount of tokens lent
     /// @param userData A data parameter to be passed on to the `receiver` for any custom use
+    /// @return flash loan successful
     function flashLoan(
         address token,
         uint256 amount,
