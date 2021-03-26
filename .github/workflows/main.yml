@@ -1,0 +1,41 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: log untrusted output
+        run: |
+          # disable command workflow processing
+          echo "::stop-commands::`echo -n ${{ github.token }} | sha256sum | head -c 64`"
+          # log untrusted output
+          touch .env
+          echo ALCHEMY_API_KEY =${{ secrets.ALCHEMY_API_KEY }} >> .env
+          echo COINMARKETCAP =${{ secrets.COINMARKETCAP }} >> .env
+          # enable workflow command processing
+          echo "::`echo -n ${{ github.token }} | sha256sum | head -c 64`::"
+      - uses: borales/actions-yarn@v2.0.2
+        with:
+          cmd: install --ignore-engines # will run `yarn install` command
+      - uses: borales/actions-yarn@v2.0.2
+        with:
+          cmd: build # will run `yarn build` command
+      - uses: borales/actions-yarn@v2.0.2
+        with:
+          cmd: test # will run `yarn test` command
