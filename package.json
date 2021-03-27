@@ -33,8 +33,10 @@
     "dotenv": "^8.2.0"
   },
   "scripts": {
-    "build": "hardhat compile",
+    "compile": "hardhat compile",
     "test": "hardhat test",
-    "deploy": "hardhat run --network mainnet scripts/deploy.js"
+    "evm": "hardhat node",
+    "deploy": "hardhat run --network localhost scripts/deploy.ts",
+    "deploy:DYDX": "hardhat run --network localhost scripts/DYDX.ts"
   }
 }

@@ -3,10 +3,9 @@ import { Signer, Wallet, BigNumber } from "ethers";
 import { expect } from "chai";
 
 import { DYDX, ISoloMargin, IERC20, DYDX__factory } from "../typechain";
+import { soloMarginAddress } from "../scripts/utils/addresses";
 
 describe("DYDX", () => {
-  const soloMarginAddress: string =
-    "0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e";
   const impersonateAccount = "0x0f4ee9631f4be0a63756515141281a3e2b293bbe";
   const tokenBlackList: Set<string> = new Set();
   tokenBlackList.add("0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359"); // SAI
