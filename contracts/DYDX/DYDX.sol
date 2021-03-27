@@ -15,7 +15,6 @@ contract DYDX is ICallee {
 
     ISoloMargin public immutable soloMargin;
     mapping(address => uint256) public tokenAddressToMarketId;
-    mapping(address => bool) public tokensRegistered;
 
     // 2 wei flash loan fee
     uint256 public constant flashFee = 2;
@@ -33,7 +32,6 @@ contract DYDX is ICallee {
             address token =
                 ISoloMargin(_soloMargin).getMarketTokenAddress(marketId);
             tokenAddressToMarketId[token] = marketId;
-            tokensRegistered[token] = true;
         }
     }
 

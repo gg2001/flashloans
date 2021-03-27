@@ -54,10 +54,6 @@ describe("DYDX", () => {
         await dydx.tokenAddressToMarketId(soloMarginToken)
       ).toNumber();
       expect(tokenAddressToMarketId).to.equal(marketId);
-      const tokensRegistered: boolean = await dydx.tokensRegistered(
-        soloMarginToken
-      );
-      expect(tokensRegistered).to.equal(true);
     }
   });
 
