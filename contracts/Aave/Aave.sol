@@ -17,6 +17,7 @@ contract Aave is IFlashLoanReceiver {
     ILendingPoolAddressesProvider public immutable override ADDRESSES_PROVIDER;
     ILendingPool public immutable override LENDING_POOL;
 
+    /// @param provider Aave lending pool addresses provider
     constructor(ILendingPoolAddressesProvider provider) {
         ADDRESSES_PROVIDER = provider;
         LENDING_POOL = ILendingPool(provider.getLendingPool());
