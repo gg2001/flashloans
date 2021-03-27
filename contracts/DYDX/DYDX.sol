@@ -13,7 +13,7 @@ import {DYDXDataTypes} from "./libraries/DYDXDataTypes.sol";
 contract DYDX is ICallee {
     using SafeMath for uint256;
 
-    ISoloMargin public soloMargin;
+    ISoloMargin public immutable soloMargin;
     mapping(address => uint256) public tokenAddressToMarketId;
     mapping(address => bool) public tokensRegistered;
 
@@ -28,15 +28,16 @@ contract DYDX is ICallee {
         soloMargin = ISoloMargin(_soloMargin);
 
         // Setup state variables
-        uint256 numMarkets = soloMargin.getNumMarkets();
+        uint256 numMarkets = ISoloMargin(_soloMargin).getNumMarkets();
         for (uint256 marketId = 0; marketId < numMarkets; marketId++) {
-            address token = soloMargin.getMarketTokenAddress(marketId);
+            address token =
+                ISoloMargin(_soloMargin).getMarketTokenAddress(marketId);
             tokenAddressToMarketId[token] = marketId;
             tokensRegistered[token] = true;
         }
     }
 
-    /// @dev From ERC-3156. Loan `value` tokens to `receiver`, which needs to return them plus fee to this contract within the same transaction.
+    /// @dev Initiates flash loan
     /// @param token The loan currency
     /// @param amount The amount of tokens lent
     /// @param userData A data parameter to be passed on to the `receiver` for any custom use

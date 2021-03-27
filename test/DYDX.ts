@@ -6,9 +6,12 @@ import { DYDX, ISoloMargin, IERC20, DYDX__factory } from "../typechain";
 import { soloMarginAddress } from "../scripts/utils/addresses";
 
 describe("DYDX", () => {
+  // an address with a WETH, DAI and USDC balance
   const impersonateAccount = "0x0f4ee9631f4be0a63756515141281a3e2b293bbe";
-  const tokenBlackList: Set<string> = new Set();
-  tokenBlackList.add("0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359"); // SAI
+  // skip deprecated tokens
+  const tokenBlackList: Set<string> = new Set([
+    "0x89d24A6b4CcB1B6fAA2625fE562bDD9a23260359", // SAI
+  ]);
 
   let accounts: Signer[];
   let dydx: DYDX;
@@ -84,7 +87,7 @@ describe("DYDX", () => {
       const dydxBalance: BigNumber = await marginToken.balanceOf(dydx.address);
       expect(dydxBalance).to.equal(flashFee);
       await dydx.flashLoan(
-        soloMarginToken,
+        marginToken.address,
         maxFlashLoan,
         ethers.utils.formatBytes32String("")
       );
