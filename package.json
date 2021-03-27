@@ -37,6 +37,7 @@
     "test": "hardhat test",
     "evm": "hardhat node",
     "deploy": "hardhat run --network localhost scripts/deploy.ts",
-    "deploy:DYDX": "hardhat run --network localhost scripts/DYDX.ts"
+    "deploy:DYDX": "hardhat run --network localhost scripts/DYDX.ts",
+    "deploy:Aave": "hardhat run --network localhost scripts/Aave.ts"
   }
 }

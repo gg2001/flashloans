@@ -12,10 +12,6 @@ import {
 import { lendingPoolProviderAddress } from "../scripts/utils/addresses";
 
 describe("Aave", () => {
-  let accounts: Signer[];
-  let aave: Aave;
-  let lendingPoolAddressesProvider: ILendingPoolAddressesProvider;
-  let lendingPool: ILendingPool;
   let lendingPoolTokens: string[] = [
     "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", // WETH
     "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // USDC
@@ -23,6 +19,11 @@ describe("Aave", () => {
   ];
   // an address with a WETH, DAI and USDC balance
   const impersonateAccount = "0x0f4ee9631f4be0a63756515141281a3e2b293bbe";
+
+  let accounts: Signer[];
+  let aave: Aave;
+  let lendingPoolAddressesProvider: ILendingPoolAddressesProvider;
+  let lendingPool: ILendingPool;
 
   beforeEach(async () => {
     accounts = await ethers.getSigners();
