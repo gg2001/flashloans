@@ -48,7 +48,7 @@ contract DYDX is ICallee {
         DYDXDataTypes.ActionArgs[] memory operations = new DYDXDataTypes.ActionArgs[](3);
         operations[0] = getWithdrawAction(token, amount);
         // Encode arbitrary data to be sent to callFunction
-        operations[1] = getCallAction(abi.encode(msg.sender, token, amount, userData));
+        operations[1] = getCallAction(abi.encode(token, amount, userData));
         operations[2] = getDepositAction(token, amount.add(flashFee));
         // dYdX account info
         DYDXDataTypes.AccountInfo[] memory accountInfos = new DYDXDataTypes.AccountInfo[](1);
@@ -72,8 +72,7 @@ contract DYDX is ICallee {
         require(sender == address(this), "FlashLoan only from this contract");
 
         // Decode arbitrary data sent from sender
-        (address origin, address token, uint256 amount, bytes memory userData) =
-            abi.decode(data, (address, address, uint256, bytes));
+        (address token, uint256 amount, bytes memory userData) = abi.decode(data, (address, uint256, bytes));
 
         // This contract now has the funds requested
         // Your logic goes here
