@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import { Signer, Wallet } from "ethers";
 
 import { Aave, Aave__factory } from "../typechain";
-import { lendingPoolProviderAddress } from "./utils/addresses";
+import { lendingPoolProviderAddress } from "./constants/addresses";
 
 async function main() {
   const accounts: Signer[] = await ethers.getSigners();

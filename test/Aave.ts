@@ -3,7 +3,7 @@ import { Signer, Wallet, BigNumber } from "ethers";
 import { expect } from "chai";
 
 import { Aave, ILendingPool, ILendingPoolAddressesProvider, IERC20, Aave__factory } from "../typechain";
-import { lendingPoolProviderAddress } from "../scripts/utils/addresses";
+import { lendingPoolProviderAddress } from "../scripts/constants/addresses";
 
 describe("Aave", () => {
   const lendingPoolTokens: string[] = [

@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import { Signer, Wallet } from "ethers";
 
 import { DYDX, DYDX__factory } from "../typechain";
-import { soloMarginAddress } from "./utils/addresses";
+import { soloMarginAddress } from "./constants/addresses";
 
 async function main() {
   const accounts: Signer[] = await ethers.getSigners();

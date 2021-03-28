@@ -18,14 +18,10 @@ contract DYDX is ICallee {
 
     // 2 wei flash loan fee
     uint256 public constant flashFee = 2;
-    uint256 internal constant NULL_ACCOUNT_ID = 0;
-    uint256 internal constant NULL_MARKET_ID = 0;
-    bytes internal constant NULL_DATA = "";
 
     /// @param _soloMargin dYdX SoloMargin address
     constructor(address _soloMargin) {
         soloMargin = ISoloMargin(_soloMargin);
-
         // Setup state variables
         uint256 numMarkets = ISoloMargin(_soloMargin).getNumMarkets();
         for (uint256 marketId = 0; marketId < numMarkets; marketId++) {
@@ -93,10 +89,10 @@ contract DYDX is ICallee {
                     value: amount
                 }),
                 primaryMarketId: tokenAddressToMarketId[token],
-                secondaryMarketId: NULL_MARKET_ID,
+                secondaryMarketId: 0, // NULL_MARKET_ID
                 otherAddress: address(this),
-                otherAccountId: NULL_ACCOUNT_ID,
-                data: NULL_DATA
+                otherAccountId: 0, // NULL_ACCOUNT_ID
+                data: "" // NULL_DATA
             });
     }
 
@@ -116,10 +112,10 @@ contract DYDX is ICallee {
                     value: repaymentAmount
                 }),
                 primaryMarketId: tokenAddressToMarketId[token],
-                secondaryMarketId: NULL_MARKET_ID,
+                secondaryMarketId: 0, // NULL_MARKET_ID
                 otherAddress: address(this),
-                otherAccountId: NULL_ACCOUNT_ID,
-                data: NULL_DATA
+                otherAccountId: 0, // NULL_ACCOUNT_ID
+                data: "" // NULL_DATA
             });
     }
 
@@ -134,10 +130,10 @@ contract DYDX is ICallee {
                     ref: DYDXDataTypes.AssetReference.Delta,
                     value: 0
                 }),
-                primaryMarketId: NULL_MARKET_ID,
-                secondaryMarketId: NULL_MARKET_ID,
+                primaryMarketId: 0, // NULL_MARKET_ID
+                secondaryMarketId: 0, // NULL_MARKET_ID
                 otherAddress: address(this),
-                otherAccountId: NULL_ACCOUNT_ID,
+                otherAccountId: 0, // NULL_ACCOUNT_ID
                 data: data_
             });
     }

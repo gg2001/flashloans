@@ -3,7 +3,7 @@ import { Signer, Wallet, BigNumber } from "ethers";
 import { expect } from "chai";
 
 import { DYDX, ISoloMargin, IERC20, DYDX__factory } from "../typechain";
-import { soloMarginAddress } from "../scripts/utils/addresses";
+import { soloMarginAddress } from "../scripts/constants/addresses";
 
 describe("DYDX", () => {
   // an address with a WETH, DAI and USDC balance
