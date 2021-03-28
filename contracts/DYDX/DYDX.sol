@@ -2,11 +2,11 @@
 pragma solidity ^0.7.5;
 pragma experimental ABIEncoderV2;
 
-import {SafeMath} from "@openzeppelin/contracts/math/SafeMath.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {ISoloMargin} from "./interfaces/ISoloMargin.sol";
-import {ICallee} from "./interfaces/ICallee.sol";
-import {DYDXDataTypes} from "./libraries/DYDXDataTypes.sol";
+import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ISoloMargin } from "./interfaces/ISoloMargin.sol";
+import { ICallee } from "./interfaces/ICallee.sol";
+import { DYDXDataTypes } from "./libraries/DYDXDataTypes.sol";
 
 /// @author Ganesh Gautham Elango
 /// @title dYdX flash loan contract
@@ -29,8 +29,7 @@ contract DYDX is ICallee {
         // Setup state variables
         uint256 numMarkets = ISoloMargin(_soloMargin).getNumMarkets();
         for (uint256 marketId = 0; marketId < numMarkets; marketId++) {
-            address token =
-                ISoloMargin(_soloMargin).getMarketTokenAddress(marketId);
+            address token = ISoloMargin(_soloMargin).getMarketTokenAddress(marketId);
             tokenAddressToMarketId[token] = marketId;
         }
     }
@@ -46,22 +45,15 @@ contract DYDX is ICallee {
         bytes memory userData
     ) external returns (bool) {
         // dYdX operations for performing a flash loan
-        DYDXDataTypes.ActionArgs[] memory operations =
-            new DYDXDataTypes.ActionArgs[](3);
+        DYDXDataTypes.ActionArgs[] memory operations = new DYDXDataTypes.ActionArgs[](3);
         operations[0] = getWithdrawAction(token, amount);
         // Encode arbitrary data to be sent to callFunction
-        operations[1] = getCallAction(
-            abi.encode(msg.sender, token, amount, userData)
-        );
+        operations[1] = getCallAction(abi.encode(msg.sender, token, amount, userData));
         operations[2] = getDepositAction(token, amount.add(flashFee));
         // dYdX account info
-        DYDXDataTypes.AccountInfo[] memory accountInfos =
-            new DYDXDataTypes.AccountInfo[](1);
+        DYDXDataTypes.AccountInfo[] memory accountInfos = new DYDXDataTypes.AccountInfo[](1);
         // This contract
-        accountInfos[0] = DYDXDataTypes.AccountInfo({
-            owner: address(this),
-            number: 1
-        });
+        accountInfos[0] = DYDXDataTypes.AccountInfo({ owner: address(this), number: 1 });
 
         soloMargin.operate(accountInfos, operations);
         return true;
@@ -76,10 +68,7 @@ contract DYDX is ICallee {
         DYDXDataTypes.AccountInfo memory accountInfo,
         bytes memory data
     ) external override {
-        require(
-            msg.sender == address(soloMargin),
-            "Callback only from SoloMargin"
-        );
+        require(msg.sender == address(soloMargin), "Callback only from SoloMargin");
         require(sender == address(this), "FlashLoan only from this contract");
 
         // Decode arbitrary data sent from sender
@@ -93,11 +82,7 @@ contract DYDX is ICallee {
         IERC20(token).approve(address(soloMargin), amount.add(flashFee));
     }
 
-    function getWithdrawAction(address token, uint256 amount)
-        internal
-        view
-        returns (DYDXDataTypes.ActionArgs memory)
-    {
+    function getWithdrawAction(address token, uint256 amount) internal view returns (DYDXDataTypes.ActionArgs memory) {
         return
             DYDXDataTypes.ActionArgs({
                 actionType: DYDXDataTypes.ActionType.Withdraw,
@@ -139,11 +124,7 @@ contract DYDX is ICallee {
             });
     }
 
-    function getCallAction(bytes memory data_)
-        internal
-        view
-        returns (DYDXDataTypes.ActionArgs memory)
-    {
+    function getCallAction(bytes memory data_) internal view returns (DYDXDataTypes.ActionArgs memory) {
         return
             DYDXDataTypes.ActionArgs({
                 actionType: DYDXDataTypes.ActionType.Call,

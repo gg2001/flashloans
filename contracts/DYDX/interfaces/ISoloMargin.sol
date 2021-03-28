@@ -14,7 +14,7 @@
 pragma solidity ^0.7.5;
 pragma experimental ABIEncoderV2;
 
-import {DYDXDataTypes} from "../libraries/DYDXDataTypes.sol";
+import { DYDXDataTypes } from "../libraries/DYDXDataTypes.sol";
 
 /**
  * @title ISoloMargin
@@ -36,10 +36,7 @@ interface ISoloMargin {
      * @param  actions   An ordered list of all actions that will be taken in this operation. The
      *                   actions will be processed in order.
      */
-    function operate(
-        DYDXDataTypes.AccountInfo[] memory accounts,
-        DYDXDataTypes.ActionArgs[] memory actions
-    ) external;
+    function operate(DYDXDataTypes.AccountInfo[] memory accounts, DYDXDataTypes.ActionArgs[] memory actions) external;
 
     /**
      * Get the ERC20 token address for a market.
@@ -47,10 +44,7 @@ interface ISoloMargin {
      * @param  marketId  The market to query
      * @return           The token address
      */
-    function getMarketTokenAddress(uint256 marketId)
-        external
-        view
-        returns (address);
+    function getMarketTokenAddress(uint256 marketId) external view returns (address);
 
     /**
      * Get the total number of markets.

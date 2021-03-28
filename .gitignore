@@ -330,3 +330,11 @@ build/
 .openzeppelin/.session
 
 typechain/
+
+coverage.json
+coverage/
+.coverage_artifacts/
+.coverage_cache/
+.coverage_contracts/
+
+cache/

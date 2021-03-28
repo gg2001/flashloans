@@ -10,7 +10,7 @@ async function main() {
 
   const dydxFactory: DYDX__factory = (await ethers.getContractFactory(
     "contracts/DYDX/DYDX.sol:DYDX",
-    deployer
+    deployer,
   )) as DYDX__factory;
   const dydx: DYDX = await dydxFactory.deploy(soloMarginAddress);
 
@@ -19,7 +19,7 @@ async function main() {
 
 main()
   .then(() => process.exit(0))
-  .catch((error) => {
+  .catch(error => {
     console.error(error);
     process.exit(1);
   });

@@ -10,7 +10,7 @@ async function main() {
 
   const aaveFactory: Aave__factory = (await ethers.getContractFactory(
     "contracts/Aave/Aave.sol:Aave",
-    deployer
+    deployer,
   )) as Aave__factory;
   const aave: Aave = await aaveFactory.deploy(lendingPoolProviderAddress);
 
@@ -19,7 +19,7 @@ async function main() {
 
 main()
   .then(() => process.exit(0))
-  .catch((error) => {
+  .catch(error => {
     console.error(error);
     process.exit(1);
   });

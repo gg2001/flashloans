@@ -25,7 +25,7 @@ describe("DYDX", () => {
 
     const dydxFactory: DYDX__factory = (await ethers.getContractFactory(
       "contracts/DYDX/DYDX.sol:DYDX",
-      <Wallet>accounts[0]
+      <Wallet>accounts[0],
     )) as DYDX__factory;
     dydx = await dydxFactory.deploy(soloMarginAddress);
 
@@ -33,13 +33,11 @@ describe("DYDX", () => {
 
     soloMargin = (await ethers.getContractAt(
       "contracts/DYDX/interfaces/ISoloMargin.sol:ISoloMargin",
-      soloMarginAddress
+      soloMarginAddress,
     )) as ISoloMargin;
     numMarkets = (await soloMargin.getNumMarkets()).toNumber();
     for (let marketId: number = 0; marketId < numMarkets; marketId++) {
-      const soloMarginToken: string = await soloMargin.getMarketTokenAddress(
-        marketId
-      );
+      const soloMarginToken: string = await soloMargin.getMarketTokenAddress(marketId);
       soloMarginTokens.push(soloMarginToken);
     }
   });
@@ -50,9 +48,7 @@ describe("DYDX", () => {
 
     for (let marketId: number = 0; marketId < numMarkets; marketId++) {
       const soloMarginToken: string = soloMarginTokens[marketId];
-      const tokenAddressToMarketId: number = (
-        await dydx.tokenAddressToMarketId(soloMarginToken)
-      ).toNumber();
+      const tokenAddressToMarketId: number = (await dydx.tokenAddressToMarketId(soloMarginToken)).toNumber();
       expect(tokenAddressToMarketId).to.equal(marketId);
     }
   });
@@ -62,9 +58,7 @@ describe("DYDX", () => {
       method: "hardhat_impersonateAccount",
       params: [impersonateAccount],
     });
-    const impersonateAccountSigner: Signer = await ethers.provider.getSigner(
-      impersonateAccount
-    );
+    const impersonateAccountSigner: Signer = await ethers.provider.getSigner(impersonateAccount);
     for (let marketId: number = 0; marketId < numMarkets; marketId++) {
       const soloMarginToken: string = soloMarginTokens[marketId];
       if (tokenBlackList.has(soloMarginToken)) {
@@ -72,28 +66,16 @@ describe("DYDX", () => {
       }
       const marginToken: IERC20 = (await ethers.getContractAt(
         "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
-        soloMarginToken
+        soloMarginToken,
       )) as IERC20;
-      const maxFlashLoan: BigNumber = await marginToken.balanceOf(
-        soloMarginAddress
-      );
-      marginToken
-        .connect(impersonateAccountSigner)
-        .transfer(dydx.address, flashFee);
+      const maxFlashLoan: BigNumber = await marginToken.balanceOf(soloMarginAddress);
+      await marginToken.connect(impersonateAccountSigner).transfer(dydx.address, flashFee);
       const dydxBalance: BigNumber = await marginToken.balanceOf(dydx.address);
       expect(dydxBalance).to.equal(flashFee);
-      await dydx.flashLoan(
-        marginToken.address,
-        maxFlashLoan,
-        ethers.utils.formatBytes32String("")
-      );
-      const soloBalancePostFlashLoan: BigNumber = await marginToken.balanceOf(
-        soloMarginAddress
-      );
+      await dydx.flashLoan(marginToken.address, maxFlashLoan, ethers.utils.formatBytes32String(""));
+      const soloBalancePostFlashLoan: BigNumber = await marginToken.balanceOf(soloMarginAddress);
       expect(soloBalancePostFlashLoan).to.equal(maxFlashLoan.add(flashFee));
-      const dydxBalancePostFlashLoan: BigNumber = await marginToken.balanceOf(
-        dydx.address
-      );
+      const dydxBalancePostFlashLoan: BigNumber = await marginToken.balanceOf(dydx.address);
       expect(dydxBalancePostFlashLoan.toNumber()).to.equal(0);
     }
     await network.provider.request({

@@ -1,0 +1,9 @@
+# folders
+.yarn/
+build/
+dist/
+node_modules/
+
+# contracts
+interfaces/
+libraries/

@@ -2,7 +2,7 @@
 pragma solidity ^0.7.5;
 pragma experimental ABIEncoderV2;
 
-import {DataTypes} from "../libraries/DataTypes.sol";
+import { DataTypes } from "../libraries/DataTypes.sol";
 
 interface ILendingPool {
     /**
@@ -37,8 +37,5 @@ interface ILendingPool {
      * @param asset The address of the underlying asset of the reserve
      * @return The state of the reserve
      **/
-    function getReserveData(address asset)
-        external
-        view
-        returns (DataTypes.ReserveData memory);
+    function getReserveData(address asset) external view returns (DataTypes.ReserveData memory);
 }

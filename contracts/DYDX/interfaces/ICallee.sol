@@ -14,7 +14,7 @@
 pragma solidity ^0.7.5;
 pragma experimental ABIEncoderV2;
 
-import {DYDXDataTypes} from "../libraries/DYDXDataTypes.sol";
+import { DYDXDataTypes } from "../libraries/DYDXDataTypes.sol";
 
 /**
  * @title ICallee
