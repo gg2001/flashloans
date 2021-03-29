@@ -53,6 +53,8 @@ const config: HardhatUserConfig = {
   },
   dependencyCompiler: {
     paths: ["@openzeppelin/contracts/token/ERC20/ERC20.sol"],
+    path: "./hardhat-dependency-compiler",
+    keep: true,
   },
 };
 

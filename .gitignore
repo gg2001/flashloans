@@ -338,3 +338,5 @@ coverage/
 .coverage_contracts/
 
 cache/
+
+hardhat-dependency-compiler/
