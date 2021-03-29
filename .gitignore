@@ -339,4 +339,4 @@ coverage/
 
 cache/
 
-hardhat-dependency-compiler/
+.replit
