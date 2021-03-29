@@ -38,7 +38,4 @@ jobs:
           cmd: compile # will run `yarn compile` command
       - uses: borales/actions-yarn@v2.0.2
         with:
-          cmd: typechain # will run `yarn typechain` command
-      - uses: borales/actions-yarn@v2.0.2
-        with:
           cmd: test # will run `yarn test` command
