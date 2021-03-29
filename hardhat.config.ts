@@ -4,6 +4,7 @@ import "@nomiclabs/hardhat-etherscan";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
+import "@tenderly/hardhat-tenderly";
 import * as dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
 
@@ -44,6 +45,10 @@ const config: HardhatUserConfig = {
   typechain: {
     outDir: "typechain",
     target: "ethers-v5",
+  },
+  tenderly: {
+    username: "gg2001",
+    project: "flashloans",
   },
 };
 
