@@ -47,6 +47,7 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "evm": "hardhat node",
+    "console": "hardhat console --network localhost",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"./test/**/*.ts\"",
     "lint": "yarn run prettier && yarn run lint:sol && yarn run lint:ts",
     "lint:sol": "solhint --config ./.solhint.json --max-warnings 100 \"contracts/**/*.sol\"",
