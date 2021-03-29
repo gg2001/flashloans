@@ -52,10 +52,8 @@ const config: HardhatUserConfig = {
     project: "flashloans",
   },
   dependencyCompiler: {
-    paths: [
-      '@openzeppelin/contracts/token/ERC20/ERC20.sol',
-    ],
-  }
+    paths: ["@openzeppelin/contracts/token/ERC20/ERC20.sol"],
+  },
 };
 
 export default config;
