@@ -28,6 +28,7 @@
     "ethers": "^5.0.32",
     "fs-extra": "^9.1.0",
     "hardhat": "^2.1.1",
+    "hardhat-dependency-compiler": "^1.1.1",
     "hardhat-gas-reporter": "^1.0.4",
     "prettier": "^2.2.1",
     "prettier-plugin-solidity": "^1.0.0-beta.6",

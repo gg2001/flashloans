@@ -5,6 +5,7 @@ import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "@tenderly/hardhat-tenderly";
+import "hardhat-dependency-compiler";
 import * as dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
 
@@ -50,6 +51,11 @@ const config: HardhatUserConfig = {
     username: "gg2001",
     project: "flashloans",
   },
+  dependencyCompiler: {
+    paths: [
+      '@openzeppelin/contracts/token/ERC20/ERC20.sol',
+    ],
+  }
 };
 
 export default config;
