@@ -50,7 +50,7 @@ contract DYDX is ICallee {
         DYDXDataTypes.AccountInfo[] memory accountInfos = new DYDXDataTypes.AccountInfo[](1);
         // This contract
         accountInfos[0] = DYDXDataTypes.AccountInfo({ owner: address(this), number: 1 });
-
+        // Perform flash loan
         soloMargin.operate(accountInfos, operations);
         return true;
     }
@@ -66,14 +66,13 @@ contract DYDX is ICallee {
     ) external override {
         require(msg.sender == address(soloMargin), "Callback only from SoloMargin");
         require(sender == address(this), "FlashLoan only from this contract");
-
         // Decode arbitrary data sent from sender
         (address token, uint256 amount, bytes memory userData) = abi.decode(data, (address, uint256, bytes));
 
         // This contract now has the funds requested
         // Your logic goes here
 
-        // Approve the SoloMargin contract allowance to pull the owed amount + flashFee
+        // Approve the SoloMargin contract to pull the owed amount + flashFee
         IERC20(token).approve(address(soloMargin), amount.add(flashFee));
     }
 

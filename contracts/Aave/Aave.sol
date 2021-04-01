@@ -63,12 +63,11 @@ contract Aave is IFlashLoanReceiver {
         // This contract now has the funds requested
         // Your logic goes here
 
-        // Approve the LendingPool contract allowance to pull the owed amount + fee
+        // Approve the LendingPool contract to pull the owed amount + fee
         for (uint256 i = 0; i < assets.length; i++) {
             uint256 amountOwing = amounts[i].add(premiums[i]);
             IERC20(assets[i]).approve(address(LENDING_POOL), amountOwing);
         }
-
         return true;
     }
 }
