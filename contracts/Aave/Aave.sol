@@ -31,7 +31,7 @@ contract Aave is IFlashLoanReceiver {
         uint256[] calldata amounts,
         uint256[] calldata modes,
         bytes memory params
-    ) external returns (bool) {
+    ) external {
         LENDING_POOL.flashLoan(
             address(this), // receiverAddress
             assets,
@@ -41,7 +41,6 @@ contract Aave is IFlashLoanReceiver {
             params,
             0 // referralCode
         );
-        return true;
     }
 
     /// @dev Aave flash loan callback. Receives the token amounts and gives it back + premiums.

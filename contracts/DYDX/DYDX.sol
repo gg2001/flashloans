@@ -34,12 +34,11 @@ contract DYDX is ICallee {
     /// @param token The loan currency
     /// @param amount The amount of tokens lent
     /// @param userData A data parameter to be passed on to the `receiver` for any custom use
-    /// @return flash loan successful
     function flashLoan(
         address token,
         uint256 amount,
         bytes memory userData
-    ) external returns (bool) {
+    ) external {
         // dYdX operations for performing a flash loan
         DYDXDataTypes.ActionArgs[] memory operations = new DYDXDataTypes.ActionArgs[](3);
         operations[0] = getWithdrawAction(token, amount);
@@ -52,7 +51,6 @@ contract DYDX is ICallee {
         accountInfos[0] = DYDXDataTypes.AccountInfo({ owner: address(this), number: 1 });
         // Perform flash loan
         soloMargin.operate(accountInfos, operations);
-        return true;
     }
 
     /// @dev DYDX flash loan callback. Receives the token amount and gives it back + a flashFee.

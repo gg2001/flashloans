@@ -12,17 +12,18 @@ contract Uniswap is IUniswapV2Callee {
 
     IUniswapV2Factory public uniswapFactory;
 
-    constructor(IUniswapV2Factory _factory) {
-        uniswapFactory = _factory;
+    constructor(IUniswapV2Factory _uniswapFactory) {
+        uniswapFactory = _uniswapFactory;
     }
 
     function flashLoan(
+        IUniswapV2Pair pair,
         address token,
         address toToken,
         uint256 amount,
+        uint256 toAmount,
         bytes memory userData
-    ) external returns (bool) {
-        IUniswapV2Pair pair = IUniswapV2Pair(uniswapFactory.getPair(token, toToken));
+    ) external {
         uint256 amount0Out;
         uint256 amount1Out;
         if (token == pair.token0()) {
@@ -30,9 +31,8 @@ contract Uniswap is IUniswapV2Callee {
         } else if (token == pair.token1()) {
             amount1Out = amount;
         }
-        bytes memory data = abi.encode(token, toToken, userData);
+        bytes memory data = abi.encode(token, toToken, toAmount, userData);
         pair.swap(amount0Out, amount1Out, address(this), data);
-        return true;
     }
 
     function uniswapV2Call(
@@ -42,14 +42,16 @@ contract Uniswap is IUniswapV2Callee {
         bytes calldata data
     ) external override {
         require(sender == address(this), "only this contract may initiate");
-        (address token, address toToken, bytes memory userData) = abi.decode(data, (address, address, bytes));
-        require(msg.sender == uniswapFactory.getPair(token, toToken), "only permissioned UniswapV2 pair can call");
+        address token0 = IUniswapV2Pair(msg.sender).token0(); // fetch the address of token0
+        address token1 = IUniswapV2Pair(msg.sender).token1();
+        require(msg.sender == uniswapFactory.getPair(token0, token1), "only permissioned UniswapV2 pair can call");
+        (address token, address toToken, uint256 toAmount, bytes memory userData) = abi.decode(data, (address, address, uint256, bytes));
         uint256 amount = amount0 > 0 ? amount0 : amount1;
 
         // This contract now has the funds requested
         // Your logic goes here
 
         // Approve the pair contract to pull the owed amount + flashFee
-        IERC20(toToken).transfer(msg.sender, amount.add(amount.mul(3).div(997).add(1)));
+        IERC20(toToken).transfer(msg.sender, toAmount.add(toAmount.mul(3).div(997).add(1)));
     }
 }
