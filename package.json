@@ -56,8 +56,9 @@
     "prettier": "prettier --config .prettierrc --write \"**/*.{js,json,md,sol,ts}\"",
     "prettier:list-different": "prettier --config .prettierrc --list-different \"**/*.{js,json,md,sol,ts}\"",
     "typechain": "hardhat typechain",
-    "deploy": "yarn run deploy:DYDX && yarn run deploy:Aave",
-    "deploy:DYDX": "hardhat run --network localhost scripts/DYDX.ts",
-    "deploy:Aave": "hardhat run --network localhost scripts/Aave.ts"
+    "migrate": "hardhat run --network localhost scripts/migrate.ts",
+    "migrate:DYDX": "hardhat run --network localhost scripts/DYDX.ts",
+    "migrate:Aave": "hardhat run --network localhost scripts/Aave.ts",
+    "migrate:Uniswap": "hardhat run --network localhost scripts/Uniswap.ts"
   }
 }
