@@ -45,13 +45,18 @@ contract Uniswap is IUniswapV2Callee {
         address token0 = IUniswapV2Pair(msg.sender).token0(); // fetch the address of token0
         address token1 = IUniswapV2Pair(msg.sender).token1();
         require(msg.sender == uniswapFactory.getPair(token0, token1), "only permissioned UniswapV2 pair can call");
-        (address token, address toToken, uint256 toAmount, bytes memory userData) = abi.decode(data, (address, address, uint256, bytes));
+        (address token, address toToken, uint256 toAmount, bytes memory userData) =
+            abi.decode(data, (address, address, uint256, bytes));
         uint256 amount = amount0 > 0 ? amount0 : amount1;
 
         // This contract now has the funds requested
         // Your logic goes here
 
         // Approve the pair contract to pull the owed amount + flashFee
-        IERC20(toToken).transfer(msg.sender, toAmount.add(toAmount.mul(3).div(997).add(1)));
+        if (token == toToken) {
+            IERC20(toToken).transfer(msg.sender, toAmount.add(toAmount.mul(3).div(997).add(1)));
+        } else {
+            IERC20(toToken).transfer(msg.sender, toAmount);
+        }
     }
 }
