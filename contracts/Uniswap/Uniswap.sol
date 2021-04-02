@@ -20,17 +20,11 @@ contract Uniswap is IUniswapV2Callee {
         IUniswapV2Pair pair,
         address token,
         address toToken,
-        uint256 amount,
+        uint256 amount0Out,
+        uint256 amount1Out,
         uint256 toAmount,
         bytes memory userData
     ) external {
-        uint256 amount0Out;
-        uint256 amount1Out;
-        if (token == pair.token0()) {
-            amount0Out = amount;
-        } else if (token == pair.token1()) {
-            amount1Out = amount;
-        }
         bytes memory data = abi.encode(token, toToken, toAmount, userData);
         pair.swap(amount0Out, amount1Out, address(this), data);
     }
@@ -54,7 +48,7 @@ contract Uniswap is IUniswapV2Callee {
 
         // Approve the pair contract to pull the owed amount + flashFee
         if (token == toToken) {
-            IERC20(toToken).transfer(msg.sender, toAmount.add(toAmount.mul(3).div(997).add(1)));
+            IERC20(toToken).transfer(msg.sender, amount.add(amount.mul(3).div(997).add(1)));
         } else {
             IERC20(toToken).transfer(msg.sender, toAmount);
         }
