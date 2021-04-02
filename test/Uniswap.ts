@@ -102,62 +102,76 @@ describe("Uniswap", () => {
   });
 
   it("should perform flash swap", async () => {
-    // const wethToken: IERC20 = (await ethers.getContractAt(
-    //   "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
-    //   wethAddress,
-    // )) as IERC20;
-    // await network.provider.request({
-    //   method: "hardhat_impersonateAccount",
-    //   params: [impersonateAccount],
-    // });
-    // const impersonateAccountSigner: Signer = await ethers.provider.getSigner(impersonateAccount);
-    // const token: string = uniswapTokens[0];
-    // const uniswapPairAddress = await uniswapV2Factory.getPair(token, wethAddress);
-    // const uniswapPair = (await ethers.getContractAt(
-    //   "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol:IUniswapV2Pair",
-    //   uniswapPairAddress,
-    // )) as IUniswapV2Pair;
-    // const uniswapToken: IERC20 = (await ethers.getContractAt(
-    //   "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
-    //   token,
-    // )) as IERC20;
-    // const token0: string = await uniswapPair.token0();
-    // console.log(token0);
-    // const token1: string = await uniswapPair.token1();
-    // console.log(token1);
-    // const amountIn: BigNumber = ethers.utils.parseEther("100");
-    // const { reserve0, reserve1 }: { reserve0: BigNumber; reserve1: BigNumber } = await uniswapPair.getReserves();
-    // const reserveIn: BigNumber = token0 === wethAddress ? reserve0 : reserve1;
-    // const reserveOut: BigNumber = token0 === token ? reserve0 : reserve1;
-    // const amountInWithFee: BigNumber = amountIn.mul(997);
-    // const numerator: BigNumber = amountInWithFee.mul(reserveOut);
-    // const denominator: BigNumber = reserveIn.mul(1000).add(amountInWithFee);
-    // const amountOut: BigNumber = numerator.div(denominator);
-    // console.log(reserveIn.toString());
-    // console.log(reserveOut.toString());
-    // console.log(amountIn.toString());
-    // console.log(amountOut.toString());
-    // const impersonateBalance: BigNumber = await uniswapToken.balanceOf(impersonateAccount);
-    // console.log(impersonateBalance.toString());
-    // console.log(amountOut.add(amountOut.mul(3).div(997).add(1)).toString());
-    // await uniswapToken.connect(impersonateAccountSigner).transfer(uniswap.address, amountOut.add(amountOut.mul(3).div(997).add(2)));
-    // const uniswapBalance: BigNumber = await uniswapToken.balanceOf(uniswap.address);
-    // expect(uniswapBalance).to.equal(amountOut.add(amountOut.mul(3).div(997).add(2)));
-    // await uniswap.flashLoan(
-    //   uniswapPair.address,
-    //   wethToken.address,
-    //   uniswapToken.address,
-    //   amountIn,
-    //   amountOut.add(1),
-    //   ethers.utils.formatBytes32String(""),
-    // );
-    // const uniswapPairBalancePostFlashLoan: BigNumber = await uniswapToken.balanceOf(uniswapPairAddress);
-    // expect(uniswapPairBalancePostFlashLoan).to.equal(maxFlashLoan.add(flashFee).add(1));
-    // const uniswapBalancePostFlashLoan: BigNumber = await uniswapToken.balanceOf(uniswap.address);
-    // expect(uniswapBalancePostFlashLoan.toNumber()).to.equal(0);
-    // await network.provider.request({
-    //   method: "hardhat_stopImpersonatingAccount",
-    //   params: [impersonateAccount],
-    // });
+    await network.provider.request({
+      method: "hardhat_impersonateAccount",
+      params: [impersonateAccount],
+    });
+    const impersonateAccountSigner: Signer = await ethers.provider.getSigner(impersonateAccount);
+    const wethToken: IERC20 = (await ethers.getContractAt(
+      "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
+      wethAddress,
+    )) as IERC20;
+    const token: string = uniswapTokens[0];
+    const uniswapPairAddress = await uniswapV2Factory.getPair(token, wethToken.address);
+    const uniswapPair = (await ethers.getContractAt(
+      "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol:IUniswapV2Pair",
+      uniswapPairAddress,
+    )) as IUniswapV2Pair;
+    const uniswapToken: IERC20 = (await ethers.getContractAt(
+      "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
+      token,
+    )) as IERC20;
+    const amountOut = ethers.utils.parseEther("100");
+    // Get amount in
+    const token0: string = await uniswapPair.token0();
+    const token1: string = await uniswapPair.token1();
+    const { reserve0, reserve1 }: { reserve0: BigNumber; reserve1: BigNumber } = await uniswapPair.getReserves();
+    console.log(reserve0.toString());
+    console.log(reserve1.toString());
+    const reserveIn: BigNumber = token0 === token ? reserve0 : reserve1;
+    const reserveOut: BigNumber = token0 === wethToken.address ? reserve0 : reserve1;
+    const numerator: BigNumber = reserveIn.mul(amountOut).mul(1000);
+    const denominator: BigNumber = reserveOut.sub(amountOut).mul(997);
+    const amountIn: BigNumber = numerator.div(denominator).add(1);
+    // Transfer amount to contract
+    await uniswapToken.connect(impersonateAccountSigner).transfer(uniswap.address, amountIn);
+    const uniswapBalance: BigNumber = await uniswapToken.balanceOf(uniswap.address);
+    expect(uniswapBalance).to.equal(amountIn);
+
+    // Flash swap logic
+    let amount0Out: BigNumber = amountOut;
+    let amount1Out: BigNumber = BigNumber.from(0);
+    let tokenInput: string = token0;
+    let repayTokenInput: string = token1;
+    if (wethToken.address === token1) {
+      amount0Out = BigNumber.from(0);
+      amount1Out = amountOut;
+      tokenInput = token1;
+      repayTokenInput = token0;
+    }
+    await uniswap.flashLoan(
+      uniswapPair.address,
+      tokenInput,
+      repayTokenInput,
+      amount0Out,
+      amount1Out,
+      amountIn,
+      ethers.utils.formatBytes32String(""),
+    );
+
+    const uniswapTokenBalancePostFlashLoan: BigNumber = await uniswapToken.balanceOf(uniswap.address);
+    expect(uniswapTokenBalancePostFlashLoan.toNumber()).to.equal(0);
+    const uniswapWethBalancePostFlashLoan: BigNumber = await wethToken.balanceOf(uniswap.address);
+    expect(uniswapWethBalancePostFlashLoan).to.equal(amountOut);
+    const {
+      reserve0: reserve0Post,
+      reserve1: reserve1Post,
+    }: { reserve0: BigNumber; reserve1: BigNumber } = await uniswapPair.getReserves();
+    expect(reserve0Post).to.equal(reserve0.add(amountIn));
+    expect(reserve1Post).to.equal(reserve1.sub(amountOut));
+    await network.provider.request({
+      method: "hardhat_stopImpersonatingAccount",
+      params: [impersonateAccount],
+    });
   });
 });

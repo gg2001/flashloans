@@ -7,15 +7,25 @@ import { IUniswapV2Callee } from "@uniswap/v2-core/contracts/interfaces/IUniswap
 import { IUniswapV2Factory } from "@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol";
 import { IUniswapV2Pair } from "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol";
 
+/// @author Ganesh Gautham Elango
+/// @title Uniswap flash loan/swap contract
 contract Uniswap is IUniswapV2Callee {
     using SafeMath for uint256;
 
     IUniswapV2Factory public immutable uniswapFactory;
 
+    /// @param _uniswapFactory Uniswap V2 factory address
     constructor(IUniswapV2Factory _uniswapFactory) {
         uniswapFactory = _uniswapFactory;
     }
 
+    /// @dev Initiates flash loan
+    /// @param token The loan currency
+    /// @param repayToken The currency to repay in (same as token if loan, different if swap)
+    /// @param amount0Out Desired amount of token0 to borrow (0 if not being borrowed)
+    /// @param amount1Out Desired amount of token1 to borrow (0 if not being borrowed)
+    /// @param repayAmount The amount of to be repayed (0 if loan, getAmountIn value if swap)
+    /// @param userData A data parameter to be passed on to the `receiver` for any custom use
     function flashLoan(
         IUniswapV2Pair pair,
         address token,
@@ -29,6 +39,10 @@ contract Uniswap is IUniswapV2Callee {
         pair.swap(amount0Out, amount1Out, address(this), data);
     }
 
+    /// @dev Uniswap flash loan/swap callback. Receives the token amount and gives it back + fees
+    /// @param sender The msg.sender to Solo
+    /// @param amount0 Amount of token0 received
+    /// @param amount1 Amount of token1 received
     function uniswapV2Call(
         address sender,
         uint256 amount0,
