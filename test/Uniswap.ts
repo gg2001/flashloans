@@ -75,8 +75,6 @@ describe("Uniswap", () => {
       }
       await uniswap.flashLoan(
         uniswapPair.address,
-        uniswapToken.address,
-        uniswapToken.address,
         amount0Out,
         amount1Out,
         0,

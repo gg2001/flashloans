@@ -18,14 +18,12 @@ contract Uniswap is IUniswapV2Callee {
 
     function flashLoan(
         IUniswapV2Pair pair,
-        address token,
-        address toToken,
         uint256 amount0Out,
         uint256 amount1Out,
         uint256 toAmount,
         bytes memory userData
     ) external {
-        bytes memory data = abi.encode(token, toToken, toAmount, userData);
+        bytes memory data = abi.encode(toAmount, userData);
         pair.swap(amount0Out, amount1Out, address(this), data);
     }
 
@@ -36,21 +34,29 @@ contract Uniswap is IUniswapV2Callee {
         bytes calldata data
     ) external override {
         require(sender == address(this), "only this contract may initiate");
-        address token0 = IUniswapV2Pair(msg.sender).token0(); // fetch the address of token0
-        address token1 = IUniswapV2Pair(msg.sender).token1();
-        require(msg.sender == uniswapFactory.getPair(token0, token1), "only permissioned UniswapV2 pair can call");
-        (address token, address toToken, uint256 toAmount, bytes memory userData) =
-            abi.decode(data, (address, address, uint256, bytes));
-        uint256 amount = amount0 > 0 ? amount0 : amount1;
+        uint256 amount;
+        address token;
+        address repayToken;
+        if (amount0 > 0) {
+            amount = amount0;
+            token = IUniswapV2Pair(msg.sender).token0();
+            repayToken = IUniswapV2Pair(msg.sender).token1();
+        } else if (amount1 > 0) {
+            amount = amount1;
+            token = IUniswapV2Pair(msg.sender).token1();
+            repayToken = IUniswapV2Pair(msg.sender).token0();
+        }
+        require(msg.sender == uniswapFactory.getPair(token, repayToken), "only permissioned UniswapV2 pair can call");
+        (uint256 repayAmount, bytes memory userData) = abi.decode(data, (uint256, bytes));
 
         // This contract now has the funds requested
         // Your logic goes here
 
         // Approve the pair contract to pull the owed amount + flashFee
-        if (token == toToken) {
-            IERC20(toToken).transfer(msg.sender, amount.add(amount.mul(3).div(997).add(1)));
+        if (repayAmount == 0) {
+            IERC20(token).transfer(msg.sender, amount.add(amount.mul(3).div(997).add(1)));
         } else {
-            IERC20(toToken).transfer(msg.sender, toAmount);
+            IERC20(repayToken).transfer(msg.sender, repayAmount);
         }
     }
 }
