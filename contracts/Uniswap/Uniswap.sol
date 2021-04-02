@@ -10,7 +10,7 @@ import { IUniswapV2Pair } from "@uniswap/v2-core/contracts/interfaces/IUniswapV2
 contract Uniswap is IUniswapV2Callee {
     using SafeMath for uint256;
 
-    IUniswapV2Factory public uniswapFactory;
+    IUniswapV2Factory public immutable uniswapFactory;
 
     constructor(IUniswapV2Factory _uniswapFactory) {
         uniswapFactory = _uniswapFactory;
@@ -18,12 +18,14 @@ contract Uniswap is IUniswapV2Callee {
 
     function flashLoan(
         IUniswapV2Pair pair,
+        address token,
+        address repayToken,
         uint256 amount0Out,
         uint256 amount1Out,
-        uint256 toAmount,
+        uint256 repayAmount,
         bytes memory userData
     ) external {
-        bytes memory data = abi.encode(toAmount, userData);
+        bytes memory data = abi.encode(token, repayToken, repayAmount, userData);
         pair.swap(amount0Out, amount1Out, address(this), data);
     }
 
@@ -34,20 +36,10 @@ contract Uniswap is IUniswapV2Callee {
         bytes calldata data
     ) external override {
         require(sender == address(this), "only this contract may initiate");
-        uint256 amount;
-        address token;
-        address repayToken;
-        if (amount0 > 0) {
-            amount = amount0;
-            token = IUniswapV2Pair(msg.sender).token0();
-            repayToken = IUniswapV2Pair(msg.sender).token1();
-        } else if (amount1 > 0) {
-            amount = amount1;
-            token = IUniswapV2Pair(msg.sender).token1();
-            repayToken = IUniswapV2Pair(msg.sender).token0();
-        }
+        (address token, address repayToken, uint256 repayAmount, bytes memory userData) =
+            abi.decode(data, (address, address, uint256, bytes));
         require(msg.sender == uniswapFactory.getPair(token, repayToken), "only permissioned UniswapV2 pair can call");
-        (uint256 repayAmount, bytes memory userData) = abi.decode(data, (uint256, bytes));
+        uint256 amount = amount0 > 0 ? amount0 : amount1;
 
         // This contract now has the funds requested
         // Your logic goes here

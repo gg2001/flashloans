@@ -12,6 +12,7 @@ describe("Uniswap", () => {
   const uniswapTokens: string[] = [
     "0x6B175474E89094C44Da98b954EedeAC495271d0F",
     "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    wethAddress,
   ];
 
   let accounts: Signer[];
@@ -49,7 +50,10 @@ describe("Uniswap", () => {
         "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20",
         token,
       )) as IERC20;
-      const uniswapPairAddress = await uniswapV2Factory.getPair(token, wethAddress);
+      const uniswapPairAddress = await uniswapV2Factory.getPair(
+        token,
+        token !== wethAddress ? wethAddress : uniswapTokens[0],
+      );
       const uniswapPair = (await ethers.getContractAt(
         "@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol:IUniswapV2Pair",
         uniswapPairAddress,
@@ -66,15 +70,20 @@ describe("Uniswap", () => {
       // flash loan logic
       const token0: string = await uniswapPair.token0();
       const token1: string = await uniswapPair.token1();
-      let amount0Out: BigNumber = BigNumber.from(0);
+      let amount0Out: BigNumber = maxFlashLoan;
       let amount1Out: BigNumber = BigNumber.from(0);
-      if (uniswapToken.address === token0) {
-        amount0Out = maxFlashLoan;
-      } else if (uniswapToken.address === token1) {
+      let tokenInput: string = token0;
+      let repayTokenInput: string = token1;
+      if (uniswapToken.address === token1) {
+        amount0Out = BigNumber.from(0);
         amount1Out = maxFlashLoan;
+        tokenInput = token1;
+        repayTokenInput = token0;
       }
       await uniswap.flashLoan(
         uniswapPair.address,
+        tokenInput,
+        repayTokenInput,
         amount0Out,
         amount1Out,
         0,
