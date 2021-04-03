@@ -147,15 +147,7 @@ describe("Uniswap", () => {
       tokenInput = token1;
       repayTokenInput = token0;
     }
-    await uniswap.flashLoan(
-      uniswapPair.address,
-      tokenInput,
-      repayTokenInput,
-      amount0Out,
-      amount1Out,
-      amountIn,
-      "0x",
-    );
+    await uniswap.flashLoan(uniswapPair.address, tokenInput, repayTokenInput, amount0Out, amount1Out, amountIn, "0x");
 
     const uniswapTokenBalancePostFlashLoan: BigNumber = await uniswapToken.balanceOf(uniswap.address);
     expect(uniswapTokenBalancePostFlashLoan.toNumber()).to.equal(0);
