@@ -126,8 +126,6 @@ describe("Uniswap", () => {
     const token0: string = await uniswapPair.token0();
     const token1: string = await uniswapPair.token1();
     const { reserve0, reserve1 }: { reserve0: BigNumber; reserve1: BigNumber } = await uniswapPair.getReserves();
-    console.log(reserve0.toString());
-    console.log(reserve1.toString());
     const reserveIn: BigNumber = token0 === token ? reserve0 : reserve1;
     const reserveOut: BigNumber = token0 === wethToken.address ? reserve0 : reserve1;
     const numerator: BigNumber = reserveIn.mul(amountOut).mul(1000);
