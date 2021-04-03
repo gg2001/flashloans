@@ -72,7 +72,7 @@ describe("DYDX", () => {
       await marginToken.connect(impersonateAccountSigner).transfer(dydx.address, flashFee);
       const dydxBalance: BigNumber = await marginToken.balanceOf(dydx.address);
       expect(dydxBalance).to.equal(flashFee);
-      await dydx.flashLoan(marginToken.address, maxFlashLoan, ethers.utils.formatBytes32String(""));
+      await dydx.flashLoan(marginToken.address, maxFlashLoan, "0x");
       const soloBalancePostFlashLoan: BigNumber = await marginToken.balanceOf(soloMarginAddress);
       expect(soloBalancePostFlashLoan).to.equal(maxFlashLoan.add(flashFee));
       const dydxBalancePostFlashLoan: BigNumber = await marginToken.balanceOf(dydx.address);

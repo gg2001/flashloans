@@ -65,7 +65,7 @@ describe("Aave", () => {
       await lendingPoolToken.connect(impersonateAccountSigner).transfer(aave.address, flashFee);
       const aaveBalance: BigNumber = await lendingPoolToken.balanceOf(aave.address);
       expect(aaveBalance).to.equal(flashFee);
-      await aave.flashLoan([lendingPoolToken.address], [maxFlashLoan], [0], ethers.utils.formatBytes32String(""));
+      await aave.flashLoan([lendingPoolToken.address], [maxFlashLoan], [0], "0x");
       const lendingPoolBalancePostFlashLoan: BigNumber = await lendingPoolToken.balanceOf(aTokenAddress);
       expect(lendingPoolBalancePostFlashLoan).to.equal(maxFlashLoan.add(flashFee));
       const aaveBalancePostFlashLoan: BigNumber = await lendingPoolToken.balanceOf(aave.address);

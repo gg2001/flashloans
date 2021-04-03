@@ -86,8 +86,8 @@ describe("Uniswap", () => {
         repayTokenInput,
         amount0Out,
         amount1Out,
-        0,
-        ethers.utils.formatBytes32String(""),
+        BigNumber.from(0),
+        "0x",
       );
 
       const uniswapPairBalancePostFlashLoan: BigNumber = await uniswapToken.balanceOf(uniswapPair.address);
@@ -154,7 +154,7 @@ describe("Uniswap", () => {
       amount0Out,
       amount1Out,
       amountIn,
-      ethers.utils.formatBytes32String(""),
+      "0x",
     );
 
     const uniswapTokenBalancePostFlashLoan: BigNumber = await uniswapToken.balanceOf(uniswap.address);
